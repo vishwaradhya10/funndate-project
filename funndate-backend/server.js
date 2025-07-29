@@ -8,25 +8,29 @@ const PORT = process.env.PORT || 4000;
 
 // --- START OF THE FIX ---
 
-// We are telling our server to ONLY accept requests from our live Vercel website.
-// This is a very important security feature.
+// We are telling our server to accept requests from our live Vercel website
+// AND from our local computer for testing purposes.
 const allowedOrigins = [
-    'https://funddate-frontend-n4nyxfvio-vishwradhya10s-projects.vercel.app'
+    'https://funddate-frontend-n4nyxfvio-vishwradhya10s-projects.vercel.app',
+    'http://localhost:5173' // This is for local testing with Vite
 ];
 
 const corsOptions = {
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
+        // The 'origin' is the URL of the website trying to contact your backend.
+        // We will log it to help debug.
+        console.log('Request received from origin:', origin);
+
+        // Allow requests with no origin (like Postman) OR if the origin is in our list
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
         }
-        return callback(null, true);
     }
 };
 
-// Use the new, specific CORS options
+// Use the new, more flexible CORS options
 app.use(cors(corsOptions));
 
 // --- END OF THE FIX ---
