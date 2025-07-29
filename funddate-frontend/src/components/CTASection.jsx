@@ -5,14 +5,13 @@ const CTASection = () => {
     const [message, setMessage] = useState('');
     const [status, setStatus] = useState('idle'); // 'idle', 'loading', 'success', 'error'
 
-    // This is the full URL of your backend deployed on Render.
-    // Replace 'funndate-backend.onrender.com' with your actual Render URL if it's different.
+    // This is the full, public URL of your backend deployed on Render.
+    // Double-check that this is your correct Render URL.
     const backendUrl = 'https://funndate-backend.onrender.com/api/join-waitlist';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Simple email validation
         if (!email || !email.includes('@')) {
             setStatus('error');
             setMessage('Please enter a valid email address.');
@@ -23,7 +22,7 @@ const CTASection = () => {
         setMessage('');
 
         try {
-            // Send the email to our live backend server
+            // Send the email to our LIVE backend server
             const response = await fetch(backendUrl, {
                 method: 'POST',
                 headers: {
@@ -35,19 +34,16 @@ const CTASection = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                // Handle errors from the server (like "email already exists")
                 throw new Error(data.message || 'An unknown error occurred.');
             }
 
-            // Handle success
             setStatus('success');
             setMessage(data.message);
-            setEmail(''); // Clear the input field after success
+            setEmail('');
 
         } catch (error) {
             console.error('Submission error:', error);
             setStatus('error');
-            // Display the specific error message from the server or a generic one
             setMessage(error.message);
         }
     };
