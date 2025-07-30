@@ -1,33 +1,34 @@
 import React from 'react';
-import { LightbulbIcon, UsersIcon, TrendingUpIcon, DollarSignIcon, WrenchIcon } from './common/Icons.jsx';
+// Make sure to import the new ValidateIcon
+import { ValidateIcon, UsersIcon, TrendingUpIcon, DollarSignIcon, WrenchIcon } from './common/Icons.jsx';
 import JourneyStep from './common/JourneyStep.jsx';
 
 const FounderJourneySection = () => {
     const journeySteps = [
         {
-            icon: <LightbulbIcon />,
-            title: "Got an idea?",
-            description: "Use our templates & tools to refine your vision."
+            icon: <ValidateIcon />,
+            title: "Validate Your Idea",
+            description: "Get feedback from experienced mentors before you write a single line of code."
         },
         {
             icon: <UsersIcon />,
-            title: "Need a team?",
-            description: "Tap into our verified talent pool to find co-founders."
+            title: "Find a Co-founder",
+            description: "Tap into our verified talent pool to find the perfect partner for your journey."
         },
         {
             icon: <TrendingUpIcon />,
-            title: "Build traction",
-            description: "Showcase your progress on your public startup profile."
+            title: "Build Traction",
+            description: "Showcase your progress on your public startup profile to attract early believers."
         },
         {
             icon: <DollarSignIcon />,
-            title: "Get funded",
-            description: "Pitch to verified investors and secure your first check."
+            title: "Get Funded",
+            description: "Pitch to verified investors who understand your vision and secure your first check."
         },
         {
             icon: <WrenchIcon />,
-            title: "Grow your startup",
-            description: "Use our network and tools to support your growth."
+            title: "Grow Your Startup",
+            description: "Use our network, tools, and community support to scale your company."
         }
     ];
 
@@ -36,7 +37,7 @@ const FounderJourneySection = () => {
             <div className="container mx-auto text-center">
                 <h2 className="text-3xl font-bold text-white mb-20">From Idea to Funding — All in One Place</h2>
                 <div className="relative max-w-5xl mx-auto">
-                    {/* Dashed line for desktop - positioned behind the content */}
+                    {/* Dashed line for desktop */}
                     <div className="hidden md:block absolute top-10 left-0 w-full h-0.5 border-t-2 border-dashed border-white/20"></div>
                     
                     {/* Grid for steps */}

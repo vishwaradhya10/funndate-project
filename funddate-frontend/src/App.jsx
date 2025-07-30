@@ -4,7 +4,7 @@ import React from 'react';
 import Header from './components/Header.jsx';
 import HeroSection from './components/HeroSection.jsx';
 import HowItWorksSection from './components/HowItWorksSection.jsx';
-import WhyFunndateSection from './components/WhyFunddateSection.jsx';
+import WhyFunndateSection from './components/WhyFunndateSection.jsx';
 import FounderJourneySection from './components/FounderJourneySection.jsx';
 import TransparencySection from './components/TransparencySection.jsx';
 import PitchSection from './components/PitchSection.jsx';
