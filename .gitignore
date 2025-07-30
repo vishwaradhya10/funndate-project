@@ -14,3 +14,4 @@ backend/emails.json
 
 # macOS system file
 .DS_Store
+.vercel

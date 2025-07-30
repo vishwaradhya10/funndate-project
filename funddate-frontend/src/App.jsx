@@ -1,40 +1,34 @@
 import React from 'react';
 
 // Import all the section components
-import Header from './components/Header';
-import HeroSection from './components/HeroSection';
-import HowItWorksSection from './components/HowItWorksSection';
-import WhyFunndateSection from './components/WhyFunndateSection';
-import FounderJourneySection from './components/FounderJourneySection';
-import TransparencySection from './components/TransparencySection';
-import CTASection from './components/CTASection';
-import Footer from './components/Footer';
-import ChatButton from './components/ChatButton';
+import Header from './components/Header.jsx';
+import HeroSection from './components/HeroSection.jsx';
+import HowItWorksSection from './components/HowItWorksSection.jsx';
+import WhyFunndateSection from './components/WhyFunddateSection.jsx';
+import FounderJourneySection from './components/FounderJourneySection.jsx';
+import TransparencySection from './components/TransparencySection.jsx';
+import PitchSection from './components/PitchSection.jsx';
+import PricingSection from './components/PricingSection.jsx'; // <-- IMPORT THE NEW SECTION
+import CTASection from './components/CTASection.jsx';
+import Footer from './components/Footer.jsx';
+import ChatButton from './components/ChatButton.jsx';
 
-/**
- * The main App component that assembles the entire landing page.
- * It imports and renders each section in the correct order.
- */
+
 function App() {
   return (
     <div className="bg-background font-sans text-gray-800">
-      {/* The main header/navigation bar */}
       <Header />
-      
-      {/* The main content of the page, organized by sections */}
       <main>
         <HeroSection />
         <HowItWorksSection />
         <WhyFunndateSection />
         <FounderJourneySection />
         <TransparencySection />
+        <PitchSection />
+        <PricingSection /> {/* <-- ADD THE NEW SECTION HERE */}
         <CTASection />
       </main>
-
-      {/* The footer section */}
       <Footer />
-
-      {/* A floating chat button for user support */}
       <ChatButton />
     </div>
   );
