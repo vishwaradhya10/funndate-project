@@ -16,7 +16,7 @@ import ChatButton from './components/ChatButton.jsx';
 
 function App() {
   return (
-    <div className="bg-background font-sans text-gray-800">
+   <div className="bg-background font-sans text-gray-800 border-8 border-red-500">
       <Header />
       <main>
         <HeroSection />

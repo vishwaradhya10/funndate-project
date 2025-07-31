@@ -2,15 +2,27 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-// --- NEW: Import the Resend tool ---
 const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// --- NEW: Initialize Resend with your secret API key ---
-// We will get this from our live server's environment variables
-const resend = new Resend(process.env.RESEND_API_KEY);
+// --- START OF DEBUGGING SECTION ---
+
+// Let's check if the server can see the secret key at all.
+// This will only log the first 8 characters for security.
+const apiKey = process.env.RESEND_API_KEY1; // <-- UPDATED TO MATCH YOUR SETTINGS
+console.log("Server starting... Checking for API Key...");
+if (apiKey) {
+    console.log("Resend API Key found, starting with:", apiKey.substring(0, 8));
+} else {
+    console.error("CRITICAL ERROR: RESEND_API_KEY1 is NOT FOUND in environment variables!");
+}
+
+const resend = new Resend(apiKey);
+
+// --- END OF DEBUGGING SECTION ---
+
 
 // CORS Configuration
 const allowedOrigins = [
@@ -33,15 +45,7 @@ const DB_PATH = path.join(__dirname, 'emails.json');
 
 // Endpoint to get the waitlist count
 app.get('/api/waitlist-count', (req, res) => {
-    fs.readFile(DB_PATH, 'utf8', (err, data) => {
-        if (err) return res.status(200).json({ count: 0 });
-        try {
-            const emails = JSON.parse(data);
-            res.status(200).json({ count: emails.length });
-        } catch (e) {
-            res.status(200).json({ count: 0 });
-        }
-    });
+    // ... (this part is fine)
 });
 
 // Endpoint to add a new email
@@ -69,30 +73,22 @@ app.post('/api/join-waitlist', (req, res) => {
                 return res.status(500).json({ message: 'Could not save email.' });
             }
 
-            // --- NEW: Send the welcome email after saving ---
+            console.log(`Email ${email} saved to file. Now attempting to send welcome email.`);
+
             try {
+                console.log("Calling Resend API...");
                 await resend.emails.send({
                     from: 'Funndate Waitlist <onboarding@resend.dev>',
                     to: email,
                     subject: 'Welcome to the Funndate Waitlist! 🎉',
-                    html: `
-                        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                            <h2>Thank you for joining the Funndate waitlist!</h2>
-                            <p>We're thrilled to have you on board. You're one step closer to connecting with the best founders and investors in the ecosystem.</p>
-                            <p>We're working hard to launch soon. We'll keep you updated with our progress!</p>
-                            <br>
-                            <p>Best,</p>
-                            <p>The Funndate Team</p>
-                        </div>
-                    `
+                    html: `<p>Thank you for joining the Funndate waitlist!</p>`
                 });
-                console.log(`Welcome email sent to ${email}`);
+                console.log(`Successfully sent email to ${email}`);
             } catch (emailError) {
-                // If the email fails, we don't want to crash the server.
-                // We'll just log the error. The user is still on the waitlist.
-                console.error("Error sending email:", emailError);
+                console.error("--- RESEND FAILED ---");
+                console.error(emailError);
+                console.error("--- END OF RESEND ERROR ---");
             }
-            // --- END OF NEW FEATURE ---
 
             res.status(200).json({ message: 'Success! Thank you for joining. Check your inbox!' });
         });
