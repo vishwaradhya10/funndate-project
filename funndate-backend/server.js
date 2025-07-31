@@ -96,5 +96,5 @@ app.post('/api/join-waitlist', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`✅ Backend server is running successfully on http://localhost:${PORT}`);
+    console.log("!!!!!!!!!! THIS IS THE NEWEST VERSION OF THE SERVER CODE !!!!!!!!!!");
 });
