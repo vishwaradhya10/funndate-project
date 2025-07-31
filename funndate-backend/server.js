@@ -2,14 +2,20 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+// --- NEW: Import the Resend tool ---
+const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// CORS Configuration to allow your frontend to talk to this server
+// --- NEW: Initialize Resend with your secret API key ---
+// We will get this from our live server's environment variables
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// CORS Configuration
 const allowedOrigins = [
     'https://funddate-frontend-n4nyxfvio-vishwradhya10s-projects.vercel.app',
-    'http://localhost:5173' // For local testing
+    'http://localhost:5173'
 ];
 const corsOptions = {
     origin: function (origin, callback) {
@@ -25,27 +31,20 @@ app.use(express.json());
 
 const DB_PATH = path.join(__dirname, 'emails.json');
 
-// --- NEW FEATURE: An endpoint to get the current waitlist count ---
+// Endpoint to get the waitlist count
 app.get('/api/waitlist-count', (req, res) => {
     fs.readFile(DB_PATH, 'utf8', (err, data) => {
-        if (err) {
-            // If we can't read the file (e.g., it's the very first run), send back a count of 0.
-            return res.status(200).json({ count: 0 });
-        }
+        if (err) return res.status(200).json({ count: 0 });
         try {
             const emails = JSON.parse(data);
-            const count = emails.length;
-            res.status(200).json({ count: count });
-        } catch (parseErr) {
-            // If the file is empty or broken, send back 0.
+            res.status(200).json({ count: emails.length });
+        } catch (e) {
             res.status(200).json({ count: 0 });
         }
     });
 });
-// --- END OF NEW FEATURE ---
 
-
-// This is the existing endpoint to add a new email
+// Endpoint to add a new email
 app.post('/api/join-waitlist', (req, res) => {
     const { email } = req.body;
 
@@ -65,11 +64,37 @@ app.post('/api/join-waitlist', (req, res) => {
 
         emails.push(email);
 
-        fs.writeFile(DB_PATH, JSON.stringify(emails, null, 2), (writeErr) => {
+        fs.writeFile(DB_PATH, JSON.stringify(emails, null, 2), async (writeErr) => {
             if (writeErr) {
                 return res.status(500).json({ message: 'Could not save email.' });
             }
-            res.status(200).json({ message: 'Success! Thank you for joining.' });
+
+            // --- NEW: Send the welcome email after saving ---
+            try {
+                await resend.emails.send({
+                    from: 'Funndate Waitlist <onboarding@resend.dev>',
+                    to: email,
+                    subject: 'Welcome to the Funndate Waitlist! 🎉',
+                    html: `
+                        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                            <h2>Thank you for joining the Funndate waitlist!</h2>
+                            <p>We're thrilled to have you on board. You're one step closer to connecting with the best founders and investors in the ecosystem.</p>
+                            <p>We're working hard to launch soon. We'll keep you updated with our progress!</p>
+                            <br>
+                            <p>Best,</p>
+                            <p>The Funndate Team</p>
+                        </div>
+                    `
+                });
+                console.log(`Welcome email sent to ${email}`);
+            } catch (emailError) {
+                // If the email fails, we don't want to crash the server.
+                // We'll just log the error. The user is still on the waitlist.
+                console.error("Error sending email:", emailError);
+            }
+            // --- END OF NEW FEATURE ---
+
+            res.status(200).json({ message: 'Success! Thank you for joining. Check your inbox!' });
         });
     });
 });
